@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockStreet</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">StockStreet</div>
+            <div class="search">
+                <input type="text" id="ticker" placeholder="Enter stock ticker">
+                <button onclick="fetchStockData()">Get Stock Data</button>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="filter">
+            <select id="dateRange" onchange="fetchStockData()">
+                <option value="this_month">This Month</option>
+                <option value="this_quarter">This Quarter</option>
+                <option value="this_year">This Year</option>
+                <option value="last_5_years">Last 5 Years</option>
+                <option value="max">Max (All Time)</option>
+            </select>
+        </div>
+        <div class="scoreboard">
+            <div class="score-item">
+                <h3>CEO</h3>
+                <p id="ceo-name">N/A</p>
+            </div>
+            <div class="score-item">
+                <h3>Date Listed</h3>
+                <p id="date-listed">N/A</p>
+            </div>
+            <div class="score-item">
+                <h3>Listing Price</h3>
+                <p id="listing-price">N/A</p>
+            </div>
+            <div class="score-item">
+                <h3>Current Price</h3>
+                <p id="current-price">N/A</p>
+            </div>
+            <div class="score-item">
+                <h3>Diff %</h3>
+                <p id="diff-percent">N/A</p>
+            </div>
+        </div>
+        <canvas id="stockChart"></canvas>
+        <canvas id="dayOfWeekChart"></canvas>
+    </main>
+    <footer>
+        <div class="container">
+            <div class="newsletter">
+                <h3>Subscribe to our Newsletter</h3>
+                <input type="email" placeholder="Enter your email">
+                <button>Subscribe</button>
+            </div>
+            <p>&copy; 2023 StockStreet. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let stockChartInstance = null;
+        let dayOfWeekChartInstance = null;
+
+        async function fetchStockData() {
+            const ticker = document.getElementById('ticker').value;
+            const dateRange = document.getElementById('dateRange').value;
+
+            if (!ticker) {
+                alert('Please enter a stock ticker');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/stock/${ticker}?range=${dateRange}`);
+                const data = await response.json();
+
+                // Update the scoreboard with the fetched data
+                updateScoreboard(data);
+
+                // Render charts with the fetched data
+                renderCharts(data);
+            } catch (error) {
+                console.error('Error fetching stock data:', error);
+            }
+        }
+
+        function renderCharts(data) {
+            const ticker = document.getElementById('ticker').value.toUpperCase();
+            renderChart(ticker, data);
+            renderDayOfWeekChart(data);
+        }
+
+        function renderChart(ticker, data) {
+            const ctx = document.getElementById('stockChart').getContext('2d');
+            if (stockChartInstance) {
+                stockChartInstance.destroy();
+            }
+            stockChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.dates,
+                    datasets: [{
+                        label: `${ticker} Stock Price`,
+                        data: data.prices,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { 
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            }
+                        },
+                        y: { beginAtZero: false }
+                    }
+                }
+            });
+        }
+
+        function renderDayOfWeekChart(data) {
+            const dayOfWeekCtx = document.getElementById('dayOfWeekChart').getContext('2d');
+            if (dayOfWeekChartInstance) {
+                dayOfWeekChartInstance.destroy();
+            }
+            const labels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const filteredData = data.avgDayOfWeekMovement;
+
+            dayOfWeekChartInstance = new Chart(dayOfWeekCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Average Price Movement by Day of the Week (%)',
+                        data: filteredData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function updateScoreboard(data) {
+            document.getElementById('ceo-name').innerText = data.ceoName || 'N/A';
+            document.getElementById('date-listed').innerText = data.ipoDate || 'N/A';
+            document.getElementById('listing-price').innerText = data.firstTradingPrice !== 'N/A' ? `$${data.firstTradingPrice}` : 'N/A';
+            document.getElementById('current-price').innerText = `$${data.currentPrice}` || 'N/A';
+            document.getElementById('diff-percent').innerText = data.diffPercent !== 'N/A' ? `${data.diffPercent}%` : 'N/A';
+        }
+    </script>
+</body>
+</html>
