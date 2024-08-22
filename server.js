@@ -46,7 +46,7 @@ app.get('/api/company-overview/:symbol', async (req, res) => {
   try {
     const symbol = req.params.symbol;
     console.log(`Received request for symbol: ${symbol}`);
-    const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=MZAR5IPMLGKX3KII`;
+    const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`;
     
     console.log(`Fetching data from Alpha Vantage API: ${url}`);
     const response = await fetch(url);
@@ -73,7 +73,7 @@ app.get('/api/company-overview/:symbol', async (req, res) => {
 
 app.get('/api/historical-data/:symbol', async (req, res) => {
   const { symbol } = req.params;
-  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=full&apikey=MZAR5IPMLGKX3KII`;
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=full&apikey=${ALPHA_VANTAGE_API_KEY}`;
 
   try {
     const response = await fetch(url);
