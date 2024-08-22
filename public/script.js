@@ -63,10 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateCompanyInfo(data) {
         console.log('Updating company info:', data);
-        document.getElementById('market-cap').textContent = data.MarketCapitalization || 'N/A';
-        document.getElementById('ebitda').textContent = data.EBITDA || 'N/A';
+        document.getElementById('market-cap').textContent = formatCurrencyInMillions(data.MarketCapitalization) || 'N/A';
+        document.getElementById('ebitda').textContent = formatCurrencyInMillions(data.EBITDA) || 'N/A';
         document.getElementById('pe-ratio').textContent = data.PERatio || 'N/A';
-        document.getElementById('profit-margin').textContent = data.ProfitMargin || 'N/A';
+        document.getElementById('profit-margin').textContent = formatPercentage(data.ProfitMargin) || 'N/A';
         document.getElementById('company-description').textContent = data.Description || 'No description available.';
         document.getElementById('company-name').textContent = data.Name || 'Company Name';
 
@@ -88,6 +88,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function formatCurrencyInMillions(value) {
+        if (!value || isNaN(value)) return null;
+        const millions = parseFloat(value) / 1000000;
+        return `$${millions.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}M`;
+    }
+
+    function formatPercentage(value) {
+        if (!value) return 'N/A';
+        return `${(parseFloat(value) * 100).toFixed(1)}%`;
+    }
+
     function calculateAnalystRating(data) {
         const strongBuy = parseInt(data.AnalystRatingStrongBuy) || 0;
         const buy = parseInt(data.AnalystRatingBuy) || 0;
@@ -107,7 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const halfStar = rating % 1 >= 0.5 ? 1 : 0;
         const emptyStars = 5 - fullStars - halfStar;
 
-        return '★'.repeat(fullStars) + (halfStar ? '½' : '') + '☆'.repeat(emptyStars);
+        return '<span class="star-rating">' +
+               '★'.repeat(fullStars) + 
+               (halfStar ? '&#x2BEA;' : '') + 
+               '☆'.repeat(emptyStars) +
+               '</span>';
     }
 
     async function fetchHistoricalData(symbol) {
