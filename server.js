@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const fetch = require('node-fetch');
+const path = require('path');
 const AlphaVantageAPI = require('alpha-vantage-cli').AlphaVantageAPI;
 const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 
@@ -13,7 +14,7 @@ app.use(express.static('public'));
 // Middleware to handle custom domain
 app.use((req, res, next) => {
   const host = req.get('host');
-  if (host === 'strictlyinvestmentadvice.com') {
+  if (host === 'www.strictlyinvestmentadvice.com') {
     // Handle custom domain logic if needed
   }
   next();
