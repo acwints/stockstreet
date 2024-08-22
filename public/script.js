@@ -47,15 +47,13 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchCompanyOverview(symbol) {
         try {
             console.log(`Fetching data for ${symbol}`);
-            const response = await fetch(`/api/company-overview/${symbol}`);
-            const data = await response.json();
+            const data = await fetchWithRetry(`https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}`);
             console.log('Full API response:', JSON.stringify(data, null, 2));
             if (Object.keys(data).length === 0) {
                 throw new Error('No data received from API');
             }
             console.log('EBITDA value:', data.EBITDA);
             updateCompanyInfo(data);
-            window.googleMapsApiKey = data.googleMapsApiKey;
         } catch (error) {
             console.error('Error fetching company overview:', error);
         } finally {
@@ -79,19 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const companyMap = document.getElementById('company-map');
         const mapImage = document.getElementById('company-map-image');
         
-        // Check if we have at least some address information
-        if (data.Address || data.City || data.State || data.Country) {
-            const addressParts = [data.Address, data.City, data.State, data.Country].filter(Boolean);
-            const address = addressParts.join(', ');
-            const encodedAddress = encodeURIComponent(address);
-            const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodedAddress}&zoom=13&size=300x200&markers=color:red%7C${encodedAddress}&key=${window.googleMapsApiKey}`;
+        if (data.Address && data.City && data.State && data.Country) {
+            const address = `${data.Address}, ${data.City}, ${data.State}, ${data.Country}`;
+            const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=13&size=300x200&key=AIzaSyCX3JFGYldpilk2nfv1I8_lhOIwDqLFRok`;
             mapImage.src = mapUrl;
-            mapImage.alt = `Map showing location of ${data.Name}`;
             companyMap.style.display = 'block';
         } else {
-            console.warn('No address information available for the company');
             mapImage.src = '';
-            mapImage.alt = 'Map unavailable';
             companyMap.style.display = 'none';
         }
     }
