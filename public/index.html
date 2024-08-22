@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockStreet</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">StockStreet</div>
+        </div>
+    </header>
+    <main>
+        <div class="search-container">
+            <div class="search-box">
+                <span class="dollar-sign">$ </span>
+                <input type="text" id="search-input" list="search-suggestions" placeholder="Enter a ticker">
+            </div>
+            <datalist id="search-suggestions"></datalist>
+            <button>Get Stock Data</button>
+        </div>
+        <div class="scoreboard">
+            <div class="score-item">
+                <h3>Market Cap</h3>
+                <p id="market-cap"></p>
+            </div>
+            <div class="score-item">
+                <h3>EBITDA</h3>
+                <p id="ebitda"></p>
+            </div>
+            <div class="score-item">
+                <h3>PE Ratio</h3>
+                <p id="pe-ratio"></p>
+            </div>
+            <div class="score-item">
+                <h3>Profit Margin</h3>
+                <p id="profit-margin"></p>
+            </div>
+            <div class="score-item">
+                <h3>Analyst Rating</h3>
+                <p id="analyst-rating"></p>
+            </div>
+        </div>
+        <div class="company-info">
+            <div class="company-description">
+                <h3 id="company-name"></h3>
+                <p id="company-description"></p>
+            </div>
+            <div id="company-map" class="company-map" style="display: none;">
+                <img id="company-map-image" src="" alt="Company Location Map">
+            </div>
+        </div>
+        <div class="chart-container">
+            <div class="chart-item">
+                <div id="stockChartSpinner" class="spinner" style="display: none;"></div>
+                <canvas id="stockChart"></canvas>
+            </div>
+            <div class="chart-item">
+                <div id="dayOfWeekChartSpinner" class="spinner" style="display: none;"></div>
+                <canvas id="dayOfWeekChart"></canvas>
+            </div>
+            <div class="chart-item">
+                <div id="monthlyReturnChartSpinner" class="spinner" style="display: none;"></div>
+                <canvas id="monthlyReturnChart"></canvas>
+            </div>
+            <div class="chart-item">
+                <div id="priceChangeDistributionChartSpinner" class="spinner" style="display: none;"></div>
+                <canvas id="priceChangeDistributionChart"></canvas>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <div class="newsletter">
+                <h3>Subscribe to our Newsletter</h3>
+                <input type="email" placeholder="Enter your email">
+                <button>Subscribe</button>
+            </div>
+            <p>&copy; 2023 StockStreet. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
