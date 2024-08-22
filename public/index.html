@@ -17,7 +17,10 @@
     </header>
     <main>
         <div class="search-container">
-            <input type="text" id="search-input" list="search-suggestions" placeholder="Enter company name or ticker">
+            <div class="search-box">
+                <span class="dollar-sign">$ </span>
+                <input type="text" id="search-input" list="search-suggestions" placeholder="Enter a ticker">
+            </div>
             <datalist id="search-suggestions"></datalist>
             <button>Get Stock Data</button>
         </div>
@@ -38,10 +41,19 @@
                 <h3>Profit Margin</h3>
                 <p id="profit-margin"></p>
             </div>
+            <div class="score-item">
+                <h3>Analyst Rating</h3>
+                <p id="analyst-rating"></p>
+            </div>
         </div>
-        <div class="company-description">
-            <h3>Company Description</h3>
-            <p id="company-description"></p>
+        <div class="company-info">
+            <div class="company-description">
+                <h3 id="company-name"></h3>
+                <p id="company-description"></p>
+            </div>
+            <div id="company-map" class="company-map" style="display: none;">
+                <img id="company-map-image" src="" alt="Company Location Map">
+            </div>
         </div>
         <div class="chart-container">
             <div class="chart-item">

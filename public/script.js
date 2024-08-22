@@ -55,6 +55,46 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('pe-ratio').textContent = data.PERatio || 'N/A';
         document.getElementById('profit-margin').textContent = data.ProfitMargin || 'N/A';
         document.getElementById('company-description').textContent = data.Description || 'No description available.';
+        document.getElementById('company-name').textContent = data.Name || 'Company Name';
+
+        // Calculate and display average analyst rating
+        const analystRating = calculateAnalystRating(data);
+        document.getElementById('analyst-rating').innerHTML = getStarRating(analystRating);
+
+        const companyMap = document.getElementById('company-map');
+        const mapImage = document.getElementById('company-map-image');
+        
+        if (data.Address && data.City && data.State && data.Country) {
+            const address = `${data.Address}, ${data.City}, ${data.State}, ${data.Country}`;
+            const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=13&size=300x200&key=AIzaSyCX3JFGYldpilk2nfv1I8_lhOIwDqLFRok`;
+            mapImage.src = mapUrl;
+            companyMap.style.display = 'block';
+        } else {
+            mapImage.src = '';
+            companyMap.style.display = 'none';
+        }
+    }
+
+    function calculateAnalystRating(data) {
+        const strongBuy = parseInt(data.AnalystRatingStrongBuy) || 0;
+        const buy = parseInt(data.AnalystRatingBuy) || 0;
+        const hold = parseInt(data.AnalystRatingHold) || 0;
+        const sell = parseInt(data.AnalystRatingSell) || 0;
+        const strongSell = parseInt(data.AnalystRatingStrongSell) || 0;
+
+        const totalRatings = strongBuy + buy + hold + sell + strongSell;
+        if (totalRatings === 0) return 0;
+
+        const weightedSum = (strongBuy * 5 + buy * 4 + hold * 3 + sell * 2 + strongSell * 1);
+        return weightedSum / totalRatings;
+    }
+
+    function getStarRating(rating) {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+        const emptyStars = 5 - fullStars - halfStar;
+
+        return '★'.repeat(fullStars) + (halfStar ? '½' : '') + '☆'.repeat(emptyStars);
     }
 
     async function fetchHistoricalData(symbol) {
@@ -69,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('No historical data received from API');
             }
             const processedData = processHistoricalData(timeSeriesData);
+            console.log('Processed historical data:', processedData);
             createStockChart(processedData.priceData);
             createDayOfWeekChart(processedData.dayOfWeekData);
             createMonthlyReturnChart(processedData.monthlyReturnData);
@@ -132,6 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
             avgReturn: changes.length > 0 ? changes.reduce((sum, change) => sum + change, 0) / changes.length : 0
         }));
 
+        console.log('Processed monthly return data:', avgMonthlyReturnData);
+
         const sortedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
         avgDayOfWeekData.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day));
 
@@ -168,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     x: {
                         type: 'time',
@@ -205,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         title: {
@@ -232,9 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createMonthlyReturnChart(data) {
+        console.log('Monthly return chart data:', data);
+
         const ctx = document.getElementById('monthlyReturnChart').getContext('2d');
         
-        if (window.monthlyReturnChart) {
+        if (window.monthlyReturnChart instanceof Chart) {
             window.monthlyReturnChart.destroy();
         }
 
@@ -243,6 +290,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const monthData = data.find(item => item.month === month);
             return monthData ? monthData.avgReturn : 0;
         });
+
+        console.log('Sorted monthly return data:', sortedData);
 
         window.monthlyReturnChart = new Chart(ctx, {
             type: 'bar',
@@ -258,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -286,9 +336,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createPriceChangeDistributionChart(data) {
+        console.log('Price change distribution chart data:', data);
+
         const ctx = document.getElementById('priceChangeDistributionChart').getContext('2d');
         
-        if (window.priceChangeDistributionChart) {
+        if (window.priceChangeDistributionChart instanceof Chart) {
             window.priceChangeDistributionChart.destroy();
         }
 
@@ -306,6 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,

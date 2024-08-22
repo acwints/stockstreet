@@ -1,12 +1,12 @@
 import React from 'react';
 import { useEffect, useState } from "react";
-import { Company } from "../types";
+import { Company, ScoreItem } from "../types";
+import ScoreItemComponent from "./ScoreItem.tsx";
 import { getCompany } from "../api";
-import { ScoreItem } from "./ScoreItem";
 
 function AIChatHistory() {
   const [company, setCompany] = useState<Company | null>(null);
-  const [scoreItems, setScoreItems] = useState([]);
+  const [scoreItems, setScoreItems] = useState<ScoreItem[]>([]);
 
   useEffect(() => {
     getCompany().then((data) => {
@@ -22,7 +22,7 @@ function AIChatHistory() {
       </h2>
       <div className="flex flex-wrap gap-2">
         {scoreItems.map((item, index) => (
-          <ScoreItem key={index} item={item} />
+          <ScoreItemComponent key={index} item={item} />
         ))}
       </div>
       
