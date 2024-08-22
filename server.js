@@ -3,12 +3,14 @@ require('dotenv').config();
 const express = require('express');
 const fetch = require('node-fetch');
 const path = require('path');
+const cors = require('cors'); // Add this line
 const AlphaVantageAPI = require('alpha-vantage-cli').AlphaVantageAPI;
 const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors()); // Add this line
 app.use(express.static('public'));
 
 // Middleware to handle custom domain
