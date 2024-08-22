@@ -144,6 +144,28 @@ main {
     object-fit: cover;
 }
 
+.chart-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.divider {
+    flex-grow: 1;
+    height: 1px;
+    background-color: white;
+    max-width: 200px;
+}
+
+.chart-header {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    color: white;
+    text-align: center;
+    margin: 0 20px;
+}
+
 .chart-container {
     display: flex;
     flex-wrap: wrap;
@@ -265,7 +287,7 @@ footer .container {
     color: #FFD700;
     position: absolute;
     left: 0;
-    width: 45%;
+    width: 50%;
     overflow: hidden;
 }
 
