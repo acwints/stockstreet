@@ -27,14 +27,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('priceChangeDistributionChartSpinner').style.display = isLoading ? 'block' : 'none';
     }
 
+    async function fetchWithRetry(url, retries = 3) {
+        for (let i = 0; i < retries; i++) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(`Attempt ${i + 1} failed:`, error);
+                if (i === retries - 1) throw error;
+            }
+        }
+    }
+
     async function fetchCompanyOverview(symbol) {
         try {
             console.log(`Fetching data for ${symbol}`);
-            const response = await fetch(`/api/company-overview/${symbol}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
+            const data = await fetchWithRetry(`/api/company-overview/${symbol}`);
             console.log('Full API response:', JSON.stringify(data, null, 2));
             if (Object.keys(data).length === 0) {
                 throw new Error('No data received from API');
@@ -99,11 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchHistoricalData(symbol) {
         try {
-            const response = await fetch(`/api/historical-data/${symbol}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
+            const data = await fetchWithRetry(`/api/historical-data/${symbol}`);
             const timeSeriesData = data['Time Series (Daily)'];
             if (!timeSeriesData) {
                 throw new Error('No historical data received from API');
