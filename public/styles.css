@@ -255,6 +255,25 @@ footer .container {
     font-size: 1.2em;
 }
 
+.star-rating .half-star {
+    position: relative;
+    display: inline-block;
+}
+
+.star-rating .half-star::after {
+    content: '★';
+    color: #FFD700;
+    position: absolute;
+    left: 0;
+    width: 45%;
+    overflow: hidden;
+}
+
+.star-rating .half-star::before {
+    content: '☆';
+    color: #FFD700;
+}
+
 #company-name {
     color: #FFD700;
     font-family: 'Montserrat', sans-serif;

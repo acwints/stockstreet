@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return '<span class="star-rating">' +
                '★'.repeat(fullStars) + 
-               (halfStar ? '&#x2BEA;' : '') + 
+               (halfStar ? '<span class="half-star"></span>' : '') + 
                '☆'.repeat(emptyStars) +
                '</span>';
     }
