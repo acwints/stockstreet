@@ -6,6 +6,7 @@ const path = require('path');
 const cors = require('cors'); // Add this line
 const AlphaVantageAPI = require('alpha-vantage-cli').AlphaVantageAPI;
 const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
+const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -58,7 +59,8 @@ app.get('/api/company-overview/:symbol', async (req, res) => {
       ...data,
       MarketCapitalization: data.MarketCapitalization ? formatCurrencyInMillions(data.MarketCapitalization) : null,
       EBITDA: data.EBITDA ? formatCurrencyInMillions(data.EBITDA) : null,
-      ProfitMargin: data.ProfitMargin ? formatPercentage(data.ProfitMargin) : null
+      ProfitMargin: data.ProfitMargin ? formatPercentage(data.ProfitMargin) : null,
+      googleMapsApiKey: GOOGLE_MAPS_API_KEY
     };
 
     console.log('Sending formatted data:', formattedData);
