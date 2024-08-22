@@ -22,6 +22,13 @@ app.use((req, res, next) => {
   next();
 });
 
+// Add CORS headers
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
+
 // Helper function to format currency in millions with commas
 function formatCurrencyInMillions(value) {
   if (!value || isNaN(value)) return null;
@@ -58,6 +65,8 @@ app.get('/api/company-overview/:symbol', async (req, res) => {
     res.json(formattedData);
   } catch (error) {
     console.error('Error fetching company overview:', error);
+    console.error('Error details:', error);
+    console.error('API Key:', ALPHA_VANTAGE_API_KEY);
     res.status(500).json({ error: 'Failed to fetch company overview' });
   }
 });
@@ -72,6 +81,8 @@ app.get('/api/historical-data/:symbol', async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error('Error fetching historical data:', error);
+    console.error('Error details:', error);
+    console.error('API Key:', ALPHA_VANTAGE_API_KEY);
     res.status(500).json({ error: 'Failed to fetch historical data' });
   }
 });
