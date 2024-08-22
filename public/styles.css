@@ -249,3 +249,13 @@ footer .container {
 .newsletter button:hover {
     background-color: #0056b3;
 }
+
+.star-rating {
+    color: #FFD700; /* Gold color */
+    font-size: 1.2em;
+}
+
+#company-name {
+    color: #FFD700;
+    font-family: 'Montserrat', sans-serif;
+}
