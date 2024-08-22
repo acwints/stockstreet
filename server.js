@@ -73,6 +73,11 @@ app.get('/api/historical-data/:symbol', async (req, res) => {
   }
 });
 
+// Catch-all route to serve the frontend for any unmatched routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });

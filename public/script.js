@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchCompanyOverview(symbol) {
         try {
             console.log(`Fetching data for ${symbol}`);
-            const response = await fetch(`/api/company-overview/${symbol}`);
+            const response = await fetch(`${window.location.origin}/api/company-overview/${symbol}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchHistoricalData(symbol) {
         try {
-            const response = await fetch(`/api/historical-data/${symbol}`);
+            const response = await fetch(`${window.location.origin}/api/historical-data/${symbol}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
