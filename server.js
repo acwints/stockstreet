@@ -13,7 +13,7 @@ app.use(express.static('public'));
 // Middleware to handle custom domain
 app.use((req, res, next) => {
   const host = req.get('host');
-  if (host === 'www.strictlyinvestmentadvice.com') {
+  if (host === 'strictlyinvestmentadvice.com') {
     // Handle custom domain logic if needed
   }
   next();
@@ -74,5 +74,5 @@ app.get('/api/historical-data/:symbol', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
+  console.log(`Server running at http://localhost:${port}/`);
 });
