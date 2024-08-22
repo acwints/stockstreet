@@ -28,9 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchWithRetry(url, retries = 3) {
+        const apiKey = 'MZAR5IPMLGKX3KII';
+        const fullUrl = `${url}&apikey=${apiKey}`;
         for (let i = 0; i < retries; i++) {
             try {
-                const response = await fetch(url);
+                const response = await fetch(fullUrl);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -45,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchCompanyOverview(symbol) {
         try {
             console.log(`Fetching data for ${symbol}`);
-            const data = await fetchWithRetry(`/api/company-overview/${symbol}`);
+            const data = await fetchWithRetry(`https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}`);
             console.log('Full API response:', JSON.stringify(data, null, 2));
             if (Object.keys(data).length === 0) {
                 throw new Error('No data received from API');
@@ -110,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchHistoricalData(symbol) {
         try {
-            const data = await fetchWithRetry(`/api/historical-data/${symbol}`);
+            const data = await fetchWithRetry(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&outputsize=full`);
             const timeSeriesData = data['Time Series (Daily)'];
             if (!timeSeriesData) {
                 throw new Error('No historical data received from API');
