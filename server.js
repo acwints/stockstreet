@@ -6,9 +6,18 @@ const AlphaVantageAPI = require('alpha-vantage-cli').AlphaVantageAPI;
 const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.static('public'));
+
+// Middleware to handle custom domain
+app.use((req, res, next) => {
+  const host = req.get('host');
+  if (host === 'www.strictlyinvestmentadvice.com') {
+    // Handle custom domain logic if needed
+  }
+  next();
+});
 
 // Helper function to format currency in millions with commas
 function formatCurrencyInMillions(value) {
