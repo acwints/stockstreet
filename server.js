@@ -12,6 +12,7 @@ const port = process.env.PORT || 3000;
 
 app.use(cors()); // Add this line
 app.use(express.static('public'));
+app.use(express.json()); // Add this line
 
 // Middleware to handle custom domain
 app.use((req, res, next) => {
@@ -94,4 +95,48 @@ app.get('*', (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
+});
+
+const { google } = require('googleapis');
+
+// Set up Google Sheets API
+const auth = new google.auth.GoogleAuth({
+  keyFile: path.join(__dirname, 'google-credentials.json'),
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
+
+const sheets = google.sheets({ version: 'v4', auth });
+
+app.post('/api/subscribe', async (req, res) => {
+  console.log('Received subscription request');
+  console.log('Request body:', req.body);
+
+  const { email } = req.body;
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    console.log('Invalid email address:', email);
+    return res.status(400).json({ message: 'Invalid email address' });
+  }
+
+  try {
+    console.log('Attempting to append email to Google Sheet');
+    const spreadsheetId = '1U-xHCV-oTh0-zh_PyQMU0ynQl54dFona7QAcc1J2R1U';
+    const range = 'emails!A:A';
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range,
+      valueInputOption: 'RAW',
+      insertDataOption: 'INSERT_ROWS',
+      resource: {
+        values: [[email]],
+      },
+    });
+
+    console.log('Email successfully appended to Google Sheet');
+    res.status(200).json({ message: 'Thank you for subscribing!' });
+  } catch (error) {
+    console.error('Error during subscription:', error);
+    res.status(500).json({ message: 'An error occurred. Please try again later.' });
+  }
 });

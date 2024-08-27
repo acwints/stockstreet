@@ -1066,26 +1066,47 @@ document.addEventListener('DOMContentLoaded', () => {
         newsletterForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('newsletter-email').value;
+            
+            console.log('Form submitted with email:', email);
+            
+            if (!isValidEmail(email)) {
+                console.log('Invalid email address');
+                alert('Please enter a valid email address.');
+                return;
+            }
+
             try {
-                const response = await fetch('https://script.google.com/macros/s/AKfycbxfl78_hUaIbX0Gn4zpTtgLDrScP7OHkANXegv0NUx7kILpzM2EmpcfcocCdGLqoU43/exec', {
+                console.log('Sending POST request to /api/subscribe');
+                const response = await fetch('/api/subscribe', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/json',
                     },
-                    body: `email=${encodeURIComponent(email)}`
+                    body: JSON.stringify({ email })
                 });
 
+                console.log('Response status:', response.status);
+                console.log('Response OK:', response.ok);
+
                 if (response.ok) {
-                    alert('Thank you for subscribing!');
+                    const result = await response.json();
+                    console.log('Subscription successful:', result);
+                    alert(result.message);
                     newsletterForm.reset();
                 } else {
-                    throw new Error('Network response was not ok.');
+                    console.log('Subscription failed');
+                    throw new Error('Subscription failed');
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error during subscription:', error);
                 alert('An error occurred. Please try again later.');
             }
         });
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
 
         // ... (rest of the code)
     });
