@@ -1058,4 +1058,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const randomIndex = Math.floor(Math.random() * tickers.length);
         return tickers[randomIndex];
     }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        // ... (rest of the code)
+
+        const newsletterForm = document.getElementById('newsletter-form');
+        newsletterForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('newsletter-email').value;
+            try {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbxfl78_hUaIbX0Gn4zpTtgLDrScP7OHkANXegv0NUx7kILpzM2EmpcfcocCdGLqoU43/exec', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `email=${encodeURIComponent(email)}`
+                });
+
+                if (response.ok) {
+                    alert('Thank you for subscribing!');
+                    newsletterForm.reset();
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        });
+
+        // ... (rest of the code)
+    });
 });

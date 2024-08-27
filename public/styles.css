@@ -271,15 +271,23 @@ main {
 }
 
 footer {
-    text-align: center;
     padding: 20px 0;
     background-color: #121212;
 }
 
 footer .container {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .newsletter {
@@ -310,48 +318,85 @@ footer .container {
     background-color: #0056b3;
 }
 
-.star-rating {
-    color: #FFD700; /* Gold color */
-    font-size: 1.2em;
-}
-
-.star-rating .half-star {
-    position: relative;
-    display: inline-block;
-}
-
-.star-rating .half-star::after {
-    content: '★';
-    color: #FFD700;
-    position: absolute;
-    left: 0;
-    width: 50%;
-    overflow: hidden;
-}
-
-.star-rating .half-star::before {
-    content: '☆';
-    color: #FFD700;
-}
-
-#company-name {
-    color: #FFD700;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.dollar-sign {
-    font-size: 1.5em; /* Increase font size */
-    margin-right: 5px; /* Add some spacing */
-    margin-left: 10px;
+.buy-me-coffee {
+    display: flex;
+    align-items: center;
 }
 
 @media (max-width: 768px) {
-    .scoreboard {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns for mobile */
+    footer .container {
+        flex-direction: column;
     }
 
-    .score-item {
-        flex: 0 0 calc(50% - 10px); /* Two columns */
-        margin-bottom: 10px;
+    .footer-content {
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .buy-me-coffee {
+        margin-top: 20px;
+    }
+}
+
+footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.newsletter {
+    margin-bottom: 20px;
+}
+
+.newsletter h3 {
+    margin-bottom: 10px;
+}
+
+.newsletter input {
+    padding: 10px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
+.newsletter button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.newsletter button:hover {
+    background-color: #0056b3;
+}
+
+.buy-me-coffee {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    footer .container {
+        flex-direction: column;
+    }
+
+    .footer-content {
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .buy-me-coffee {
+        margin-top: 20px;
     }
 }
