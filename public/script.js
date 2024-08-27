@@ -14,6 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
             setLoadingState(true);
             fetchCompanyOverview(symbol);
             fetchHistoricalData(symbol);
+            searchInput.blur(); // Add this line to remove focus from the input
+        }
+    });
+
+    searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            searchButton.click();
         }
     });
 
@@ -48,12 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log(`Fetching data for ${symbol}`);
             const data = await fetchWithRetry(`https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}`);
+            const priceData = await fetchWithRetry(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}`);
             console.log('Full API response:', JSON.stringify(data, null, 2));
             if (Object.keys(data).length === 0) {
                 throw new Error('No data received from API');
             }
             console.log('EBITDA value:', data.EBITDA);
-            updateCompanyInfo(data);
+            updateCompanyInfo(data, priceData);
         } catch (error) {
             console.error('Error fetching company overview:', error);
         } finally {
@@ -61,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateCompanyInfo(data) {
+    function updateCompanyInfo(data, priceData) {
         console.log('Updating company info:', data);
         document.getElementById('market-cap').textContent = formatCurrencyInMillions(data.MarketCapitalization) || 'N/A';
         document.getElementById('ebitda').textContent = formatCurrencyInMillions(data.EBITDA) || 'N/A';
@@ -69,6 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('profit-margin').textContent = formatPercentage(data.ProfitMargin) || 'N/A';
         document.getElementById('company-description').textContent = data.Description || 'No description available.';
         document.getElementById('company-name').textContent = data.Name || 'Company Name';
+
+        // Update current stock price
+        const currentPrice = priceData['Global Quote']['05. price'];
+        document.getElementById('current-stock-price').textContent = currentPrice ? `$${parseFloat(currentPrice).toFixed(2)}` : 'N/A';
 
         // Calculate and display average analyst rating
         const analystRating = calculateAnalystRating(data);
@@ -249,6 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             text: 'Price'
                         }
                     }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 }
             }
         });
@@ -261,6 +278,42 @@ document.addEventListener('DOMContentLoaded', () => {
             dayOfWeekChart.destroy();
         }
 
+        // Find the best and worst performing days
+        const maxChange = Math.max(...data.map(item => item.avgChange));
+        const minChange = Math.min(...data.map(item => item.avgChange));
+
+        // Function to interpolate between two colors
+        function interpolateColor(color1, color2, factor) {
+            const result = color1.slice();
+            for (let i = 0; i < 3; i++) {
+                result[i] = Math.round(result[i] + factor * (color2[i] - result[i]));
+            }
+            return result;
+        }
+
+        // Convert RGB array to CSS color string
+        function rgbToCss(rgb) {
+            return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+        }
+
+        // Define the colors for the gradient
+        const startColor = [220, 20, 60]; // Crimson
+        const midColor = [255, 215, 0]; // Gold
+        const endColor = [34, 139, 34]; // Forest Green
+
+        const backgroundColors = data.map(item => {
+            let factor;
+            let color;
+            if (item.avgChange < 0) {
+                factor = (item.avgChange - minChange) / (0 - minChange);
+                color = interpolateColor(startColor, midColor, factor);
+            } else {
+                factor = (item.avgChange - 0) / (maxChange - 0);
+                color = interpolateColor(midColor, endColor, factor);
+            }
+            return rgbToCss(color);
+        });
+
         dayOfWeekChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -268,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Average Price Change (%)',
                     data: data.map(item => item.avgChange),
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                    backgroundColor: backgroundColors
                 }]
             },
             options: {
@@ -294,6 +347,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 return context.parsed.y.toFixed(2) + '%';
                             }
                         }
+                    },
+                    legend: {
+                        display: false
                     }
                 }
             }
@@ -317,6 +373,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log('Sorted monthly return data:', sortedData);
 
+        // Find the best and worst performing months
+        const maxChange = Math.max(...sortedData);
+        const minChange = Math.min(...sortedData);
+
+        // Function to interpolate between two colors
+        function interpolateColor(color1, color2, factor) {
+            const result = color1.slice();
+            for (let i = 0; i < 3; i++) {
+                result[i] = Math.round(result[i] + factor * (color2[i] - result[i]));
+            }
+            return result;
+        }
+
+        // Convert RGB array to CSS color string
+        function rgbToCss(rgb) {
+            return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+        }
+
+        // Define the colors for the gradient
+        const startColor = [220, 20, 60]; // Crimson
+        const midColor = [255, 215, 0]; // Gold
+        const endColor = [34, 139, 34]; // Forest Green
+
+        const backgroundColors = sortedData.map(item => {
+            let factor;
+            let color;
+            if (item < 0) {
+                factor = (item - minChange) / (0 - minChange);
+                color = interpolateColor(startColor, midColor, factor);
+            } else {
+                factor = (item - 0) / (maxChange - 0);
+                color = interpolateColor(midColor, endColor, factor);
+            }
+            return rgbToCss(color);
+        });
+
         window.monthlyReturnChart = new Chart(ctx, {
             type: 'bar',
             data: {
@@ -324,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Average Monthly Return (%)',
                     data: sortedData,
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    backgroundColor: backgroundColors,
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
                 }]
@@ -353,6 +445,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 return context.parsed.y.toFixed(2) + '%';
                             }
                         }
+                    },
+                    legend: {
+                        display: false
                     }
                 }
             }
@@ -397,8 +492,39 @@ document.addEventListener('DOMContentLoaded', () => {
                             text: 'Daily Price Change (%)'
                         }
                     }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y.toFixed(1);
+                            }
+                        }
+                    }
                 }
             }
         });
+    }
+
+    const randomButton = document.querySelector('.search-container .random-button');
+
+    randomButton.addEventListener('click', async () => {
+        const randomTicker = await fetchRandomTicker();
+        if (randomTicker) {
+            console.log(`Searching for random ticker: ${randomTicker}`);
+            searchInput.value = randomTicker; // Set the random ticker in the search input
+            setLoadingState(true);
+            fetchCompanyOverview(randomTicker);
+            fetchHistoricalData(randomTicker);
+        }
+    });
+
+    async function fetchRandomTicker() {
+        const tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'FB', 'TSLA', 'BRK.A', 'V', 'JNJ', 'WMT'];
+        const randomIndex = Math.floor(Math.random() * tickers.length);
+        return tickers[randomIndex];
     }
 });

@@ -18,13 +18,29 @@
     <main>
         <div class="search-container">
             <div class="search-box">
-                <span class="dollar-sign">$ </span>
+                <span class="dollar-sign">$</span>
                 <input type="text" id="search-input" list="search-suggestions" placeholder="Enter a ticker">
+                <datalist id="search-suggestions"></datalist>
             </div>
-            <datalist id="search-suggestions"></datalist>
-            <button>Get Stock Data</button>
+            <div class="button-container">
+                <button>Search Company</button>
+                <button class="random-button">Random Stock</button>
+            </div>
+        </div>
+        <div class="company-info">
+            <div class="company-description">
+                <h3 id="company-name"></h3>
+                <p id="company-description"></p>
+            </div>
+            <div id="company-map" class="company-map" style="display: none;">
+                <img id="company-map-image" src="" alt="Company Location Map">
+            </div>
         </div>
         <div class="scoreboard">
+            <div class="score-item">
+                <h3>Current Price</h3>
+                <p id="current-stock-price"></p>
+            </div>
             <div class="score-item">
                 <h3>Market Cap</h3>
                 <p id="market-cap"></p>
@@ -46,15 +62,6 @@
                 <p id="analyst-rating"></p>
             </div>
         </div>
-        <div class="company-info">
-            <div class="company-description">
-                <h3 id="company-name"></h3>
-                <p id="company-description"></p>
-            </div>
-            <div id="company-map" class="company-map" style="display: none;">
-                <img id="company-map-image" src="" alt="Company Location Map">
-            </div>
-        </div>
         <div class="chart-header-container">
             <div class="divider"></div>
             <h2 class="chart-header">Last 4 Years</h2>
@@ -66,16 +73,16 @@
                 <canvas id="stockChart"></canvas>
             </div>
             <div class="chart-item">
+                <div id="priceChangeDistributionChartSpinner" class="spinner" style="display: none;"></div>
+                <canvas id="priceChangeDistributionChart"></canvas>
+            </div>
+            <div class="chart-item">
                 <div id="dayOfWeekChartSpinner" class="spinner" style="display: none;"></div>
                 <canvas id="dayOfWeekChart"></canvas>
             </div>
             <div class="chart-item">
                 <div id="monthlyReturnChartSpinner" class="spinner" style="display: none;"></div>
                 <canvas id="monthlyReturnChart"></canvas>
-            </div>
-            <div class="chart-item">
-                <div id="priceChangeDistributionChartSpinner" class="spinner" style="display: none;"></div>
-                <canvas id="priceChangeDistributionChart"></canvas>
             </div>
         </div>
     </main>
