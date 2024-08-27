@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     searchInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
-            searchButton.click();a
+            searchButton.click();
         }
     });
 
@@ -265,6 +265,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 plugins: {
                     legend: {
                         display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Stock Price Movement',
+                        font: {
+                            size: 16
+                        }
                     }
                 }
             }
@@ -350,6 +357,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     legend: {
                         display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Avg. Price Change by Day',
+                        font: {
+                            size: 16
+                        }
                     }
                 }
             }
@@ -448,6 +462,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     legend: {
                         display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Avg. Price Change by Month',
+                        font: {
+                            size: 16
+                        }
                     }
                 }
             }
@@ -502,6 +523,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             label: function(context) {
                                 return context.parsed.y.toFixed(1);
                             }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Daily Volatility',
+                        font: {
+                            size: 16
                         }
                     }
                 }
