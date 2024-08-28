@@ -142,6 +142,7 @@ app.post('/api/subscribe', async (req, res) => {
     res.status(200).json({ message: 'Thank you for subscribing!' });
   } catch (error) {
     console.error('Error during subscription:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     res.status(500).json({ message: 'An error occurred. Please try again later.' });
   }
 });
