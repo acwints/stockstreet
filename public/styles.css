@@ -270,6 +270,36 @@ main {
     }
 }
 
+.star-rating {
+    color: #FFD700; /* Gold color */
+    font-size: 1.2em;
+}
+
+.star-rating .half-star {
+    position: relative;
+    display: inline-block;
+}
+
+.star-rating .half-star::before {
+    content: '☆';
+    color: #FFD700;
+}
+
+.star-rating .half-star::after {
+    content: '★';
+    color: #FFD700;
+    position: absolute;
+    left: 0;
+    width: 50%;
+    overflow: hidden;
+}
+
+.dollar-sign {
+    font-size: 1.5em;
+    margin-right: 5px;
+    margin-left: 10px;
+}
+
 footer {
     padding: 20px 0;
     background-color: #121212;
@@ -288,6 +318,11 @@ footer .container {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+}
+
+#company-name {
+    color: #FFD700;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .newsletter {
@@ -324,6 +359,16 @@ footer .container {
 }
 
 @media (max-width: 768px) {
+    
+    .scoreboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .score-item {
+        flex: 0 0 calc(50% - 10px); /* Two columns */
+        margin-bottom: 10px;
+    }
+    
     footer .container {
         flex-direction: column;
     }
