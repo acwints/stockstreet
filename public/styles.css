@@ -15,7 +15,7 @@ header {
 
 header .container {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
@@ -347,10 +347,7 @@ footer .container {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-}
-
-.newsletter button:hover {
-    background-color: #0056b3;
+    font-weight: bold;
 }
 
 .buy-me-coffee {
@@ -359,7 +356,6 @@ footer .container {
 }
 
 @media (max-width: 768px) {
-    
     .scoreboard {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -369,69 +365,6 @@ footer .container {
         margin-bottom: 10px;
     }
     
-    footer .container {
-        flex-direction: column;
-    }
-
-    .footer-content {
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .buy-me-coffee {
-        margin-top: 20px;
-    }
-}
-
-footer .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.footer-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.newsletter {
-    margin-bottom: 20px;
-}
-
-.newsletter h3 {
-    margin-bottom: 10px;
-}
-
-.newsletter input {
-    padding: 10px;
-    margin-right: 10px;
-    border: none;
-    border-radius: 5px;
-}
-
-.newsletter button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.newsletter button:hover {
-    background-color: #0056b3;
-}
-
-.buy-me-coffee {
-    display: flex;
-    align-items: center;
-}
-
-@media (max-width: 768px) {
     footer .container {
         flex-direction: column;
     }

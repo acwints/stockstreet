@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded');
 
     const searchInput = document.getElementById('search-input');
     const searchButton = document.querySelector('.search-container button');
     const scoreItems = document.querySelectorAll('.score-item p');
     const stockChartSpinner = document.getElementById('stockChartSpinner');
     const dayOfWeekChartSpinner = document.getElementById('dayOfWeekChartSpinner');
+    const userInput = document.getElementById('user-input');
+    const submitButton = document.getElementById('submit-button');
 
     let stockChart, dayOfWeekChart;
 
@@ -211,8 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
             avgReturn: changes.length > 0 ? changes.reduce((sum, change) => sum + change, 0) / changes.length : 0
         }));
 
-        console.log('Processed monthly return data:', avgMonthlyReturnData);
-
         const sortedDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
         avgDayOfWeekData.sort((a, b) => sortedDays.indexOf(a.day) - sortedDays.indexOf(b.day));
 
@@ -330,7 +329,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Average Price Change (%)',
                     data: data.map(item => item.avgChange),
-                    backgroundColor: backgroundColors
+                    backgroundColor: backgroundColors,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
                 }]
             },
             options: {
@@ -1060,70 +1061,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const randomIndex = Math.floor(Math.random() * tickers.length);
         return tickers[randomIndex];
     }
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM fully loaded');
 
-        const searchInput = document.getElementById('search-input');
-        const searchButton = document.querySelector('.search-container button');
-        const scoreItems = document.querySelectorAll('.score-item p');
-        const stockChartSpinner = document.getElementById('stockChartSpinner');
-        
-        const newsletterForm = document.getElementById('newsletter-form');
-        if (newsletterForm) {
-            console.log('Newsletter form found');
-            newsletterForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('newsletter-email').value;
-                
-                console.log('Form submitted with email:', email);
-                
-                if (!isValidEmail(email)) {
-                    console.log('Invalid email address');
-                    alert('Please enter a valid email address.');
-                    return;
-                }
+    const form = document.getElementById('newsletter-form');
+    const newsletterBlock = document.querySelector('.newsletter');
+    const subscribeButton = form.querySelector('button[type="submit"]');
 
-                try {
-                    console.log('Sending POST request to /api/subscribe');
-                    const response = await fetch('/api/subscribe', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ email })
-                    });
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-                    console.log('Response status:', response.status);
-                    console.log('Response OK:', response.ok);
+        const formData = new FormData(form);
+        const email = formData.get('email');
 
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('Subscription successful:', result);
-                        alert(result.message);
-                        newsletterForm.reset();
-                    } else {
-                        console.log('Subscription failed');
-                        const errorText = await response.text();
-                        console.error('Error response:', errorText);
-                        throw new Error('Subscription failed');
-                    }
-                } catch (error) {
-                    console.error('Error during subscription:', error);
-                    alert('An error occurred. Please try again later.');
-                }
-            });
-        } else {
-            console.log('Newsletter form not found');
-        }
+        // Disable the button and add loading animation
+        subscribeButton.disabled = true;
+        subscribeButton.classList.add('loading');
+        subscribeButton.textContent = 'Sending...';
 
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-
-        console.log('Event listeners set up');
+        fetch('https://script.google.com/macros/s/AKfycbzoPxnN0sp1xj1asb7gKp1uq_a9wQjYKIb1Ny0bwJhpQoaVGzdBGoY9thbvBABo3rybXg/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `email=${encodeURIComponent(email)}`
+        })
+        .then(response => {
+            if (response.type === 'opaque') {
+                newsletterBlock.innerHTML = '<h3>Thanks for subscribing!</h3><p>In the meantime, follow me on X at <a href="https://x.com/acwints" style="color: #00BFFF;">@acwints</a>.</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error!', error.message);
+            newsletterBlock.innerHTML = '<h3>Oops! Something went wrong.</h3><p>Please try again later.</p>';
+        })
+        .finally(() => {
+            // Re-enable the button and remove loading animation
+            subscribeButton.disabled = false;
+            subscribeButton.classList.remove('loading');
+            subscribeButton.textContent = 'Subscribe';
+        });
     });
-
-    console.log('Script loaded');
 });
