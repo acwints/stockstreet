@@ -336,6 +336,7 @@ footer .container {
 .newsletter input {
     padding: 10px;
     margin-right: 10px;
+    margin-bottom: 10px;
     border: none;
     border-radius: 5px;
 }
@@ -371,10 +372,12 @@ footer .container {
 
     .footer-content {
         align-items: center;
+        text-align: center;
         margin-bottom: 20px;
     }
 
     .buy-me-coffee {
         margin-top: 20px;
+        justify-content: center;
     }
 }
