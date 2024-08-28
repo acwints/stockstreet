@@ -1104,6 +1104,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         newsletterForm.reset();
                     } else {
                         console.log('Subscription failed');
+                        const errorText = await response.text();
+                        console.error('Error response:', errorText);
                         throw new Error('Subscription failed');
                     }
                 } catch (error) {

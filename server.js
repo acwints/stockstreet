@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+console.log('GOOGLE_CREDENTIALS:', process.env.GOOGLE_CREDENTIALS ? 'Set' : 'Not set');
+
 const express = require('express');
 const fetch = require('node-fetch');
 const path = require('path');
@@ -104,12 +106,35 @@ app.listen(port, () => {
 const { google } = require('googleapis');
 
 // Set up Google Sheets API
-const auth = new google.auth.GoogleAuth({
-  credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
-  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-});
+let auth;
+try {
+  const credentials = process.env.GOOGLE_CREDENTIALS;
+  if (!credentials) {
+    throw new Error('GOOGLE_CREDENTIALS environment variable is not set');
+  }
+  
+  const parsedCredentials = JSON.parse(credentials);
+  console.log('Parsed credentials:', JSON.stringify(parsedCredentials, null, 2));
+  
+  auth = new google.auth.GoogleAuth({
+    credentials: parsedCredentials,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+  
+  console.log('Google Sheets credentials successfully parsed and auth object created.');
+} catch (error) {
+  console.error('Error setting up Google Sheets authentication:', error.message);
+  console.error('Google Sheets functionality will be disabled.');
+  auth = null;
+}
 
-const sheets = google.sheets({ version: 'v4', auth });
+let sheets;
+if (auth) {
+  sheets = google.sheets({ version: 'v4', auth });
+  console.log('Google Sheets API client created successfully.');
+} else {
+  console.log('Google Sheets API client not created due to authentication issues.');
+}
 
 app.post('/api/subscribe', async (req, res) => {
   console.log('Received subscription request');
@@ -123,12 +148,17 @@ app.post('/api/subscribe', async (req, res) => {
     return res.status(400).json({ message: 'Invalid email address' });
   }
 
+  if (!sheets) {
+    console.error('Google Sheets functionality is disabled. Unable to process subscription.');
+    return res.status(500).json({ message: 'Subscription service is currently unavailable.' });
+  }
+
   try {
     console.log('Attempting to append email to Google Sheet');
     const spreadsheetId = '1U-xHCV-oTh0-zh_PyQMU0ynQl54dFona7QAcc1J2R1U';
     const range = 'emails!A:A';
 
-    await sheets.spreadsheets.values.append({
+    const response = await sheets.spreadsheets.values.append({
       spreadsheetId,
       range,
       valueInputOption: 'RAW',
@@ -138,6 +168,7 @@ app.post('/api/subscribe', async (req, res) => {
       },
     });
 
+    console.log('Google Sheets API response:', JSON.stringify(response, null, 2));
     console.log('Email successfully appended to Google Sheet');
     res.status(200).json({ message: 'Thank you for subscribing!' });
   } catch (error) {
