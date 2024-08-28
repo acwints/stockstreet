@@ -105,7 +105,7 @@ const { google } = require('googleapis');
 
 // Set up Google Sheets API
 const auth = new google.auth.GoogleAuth({
-  keyFile: path.join(__dirname, 'google-credentials.json'),
+  credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS),
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
