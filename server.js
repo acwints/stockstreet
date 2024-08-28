@@ -7,8 +7,12 @@ const cors = require('cors'); // Add this line
 const AlphaVantageAPI = require('alpha-vantage-cli').AlphaVantageAPI;
 const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 
+const morgan = require('morgan');
+
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(morgan('dev'));
 
 app.use(cors()); // Add this line
 app.use(express.static('public'));
@@ -109,6 +113,7 @@ const sheets = google.sheets({ version: 'v4', auth });
 
 app.post('/api/subscribe', async (req, res) => {
   console.log('Received subscription request');
+  console.log('Request headers:', req.headers);
   console.log('Request body:', req.body);
 
   const { email } = req.body;

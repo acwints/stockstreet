@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded');
+
     const searchInput = document.getElementById('search-input');
     const searchButton = document.querySelector('.search-container button');
     const scoreItems = document.querySelectorAll('.score-item p');
@@ -1060,54 +1062,66 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     document.addEventListener('DOMContentLoaded', () => {
-        // ... (rest of the code)
+        console.log('DOM fully loaded');
 
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.querySelector('.search-container button');
+        const scoreItems = document.querySelectorAll('.score-item p');
+        const stockChartSpinner = document.getElementById('stockChartSpinner');
+        
         const newsletterForm = document.getElementById('newsletter-form');
-        newsletterForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('newsletter-email').value;
-            
-            console.log('Form submitted with email:', email);
-            
-            if (!isValidEmail(email)) {
-                console.log('Invalid email address');
-                alert('Please enter a valid email address.');
-                return;
-            }
-
-            try {
-                console.log('Sending POST request to /api/subscribe');
-                const response = await fetch('/api/subscribe', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email })
-                });
-
-                console.log('Response status:', response.status);
-                console.log('Response OK:', response.ok);
-
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Subscription successful:', result);
-                    alert(result.message);
-                    newsletterForm.reset();
-                } else {
-                    console.log('Subscription failed');
-                    throw new Error('Subscription failed');
+        if (newsletterForm) {
+            console.log('Newsletter form found');
+            newsletterForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('newsletter-email').value;
+                
+                console.log('Form submitted with email:', email);
+                
+                if (!isValidEmail(email)) {
+                    console.log('Invalid email address');
+                    alert('Please enter a valid email address.');
+                    return;
                 }
-            } catch (error) {
-                console.error('Error during subscription:', error);
-                alert('An error occurred. Please try again later.');
-            }
-        });
+
+                try {
+                    console.log('Sending POST request to /api/subscribe');
+                    const response = await fetch('/api/subscribe', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email })
+                    });
+
+                    console.log('Response status:', response.status);
+                    console.log('Response OK:', response.ok);
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('Subscription successful:', result);
+                        alert(result.message);
+                        newsletterForm.reset();
+                    } else {
+                        console.log('Subscription failed');
+                        throw new Error('Subscription failed');
+                    }
+                } catch (error) {
+                    console.error('Error during subscription:', error);
+                    alert('An error occurred. Please try again later.');
+                }
+            });
+        } else {
+            console.log('Newsletter form not found');
+        }
 
         function isValidEmail(email) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(email);
         }
 
-        // ... (rest of the code)
+        console.log('Event listeners set up');
     });
+
+    console.log('Script loaded');
 });
